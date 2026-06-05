@@ -13,13 +13,18 @@ public class DataManager {
         dataSource.setUrl("jdbc:mysql://localhost:3306/northwind");
         dataSource.setUsername("testUser1");
         dataSource.setPassword("password123");
-        String sql = "select * from products";
+        String sql = "select ProductID,ProductName,UnitPrice,UnitsInStock" +
+                " from products";
         try(Connection conn = dataSource.getConnection();
         PreparedStatement ps = conn.prepareStatement(sql);
             ResultSet rs = ps.executeQuery();    ){
+                System.out.printf("%-5s %-35s %-7s %-7s\n-----------------------------------------------------------\n","Id", "Name", "Price", "Stock");
             while(rs.next()){
-              String name =  rs.getString("ProductName");
-                System.out.println(name);
+              int productId = rs.getInt(1);
+              String name =  rs.getString(2);
+              double price = rs.getDouble(3);
+              int unitInStock = rs.getInt(4);
+                System.out.printf("%-5d %-35s %-7.2f %-7d\n",productId,name,price,unitInStock);
             }
 
         }catch (SQLException e){
