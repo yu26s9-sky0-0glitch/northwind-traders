@@ -54,4 +54,41 @@ public class DataManager {
         }
 
     }
+
+    public void getCategories() {
+        String sql = "Select CategoryID, CategoryName from categories order by CategoryID";
+        try(Connection conn = dataSource.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ResultSet rs = ps.executeQuery();){
+            System.out.printf("%-10s %-20s\n","ID", "Name");
+           while (rs.next()){
+               int id = rs.getInt(1);
+               String name = rs.getString(2);
+               System.out.printf("%-10d %-20s\n",id,name);
+           }
+        }catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
+
+    public void getProductByCategory(int id) {
+        String sql = "select ProductID,ProductName,UnitPrice,UnitsInStock from products where CategoryID = ?";
+        try(Connection conn = dataSource.getConnection();
+            PreparedStatement ps = conn.prepareStatement(sql);
+                ){
+            ps.setInt(1,id);
+            try(ResultSet rs = ps.executeQuery();) {
+            System.out.printf(ColorUtils.YELLOW_BOLD+"%-5s %-35s %-7s %-7s\n-----------------------------------------------------------\n"+ColorUtils.RESET,"Id", "Name", "Price", "Stock");
+                while (rs.next()) {
+                    int productId = rs.getInt(1);
+                    String name = rs.getString(2);
+                    double price = rs.getDouble(3);
+                    int unitInStock = rs.getInt(4);
+                    System.out.printf(ColorUtils.PURPLE + "%-5d %-35s %-7.2f %-7d\n" + ColorUtils.RESET, productId, name, price, unitInStock);
+                }
+
+            }}catch (SQLException e){
+            e.printStackTrace();
+        }
+    }
 }
